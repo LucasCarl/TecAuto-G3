@@ -1,4 +1,4 @@
-#include <Adafruit_SSD1306.h>
+#include <Adafruit_SH110X.h>
 #include <Adafruit_GFX.h>
 #include <DHT.h>
 
@@ -7,17 +7,22 @@
 // ==============================
 #define DHTPIN 33           // Pin del sensor DHT
 #define DHTTYPE DHT22       // O DHT11 según la placa
-#define LED_PWM 1           // LED integrado (PWM)
+#define LED_PWM 25          // LED con PWM (LEDC)
 #define LED_EXT 23          // LED externo (alarma)
 #define POT_PIN 32          // Potenciómetro (entrada analógica)
 #define BUTTON_PIN 19       // Pulsador
 #define TOUCH_PLUS 13       // Pin táctil +
 #define TOUCH_MINUS 4       // Pin táctil -
 
+// Configuración LEDC
+#define LED_CHANNEL 0       // Canal LEDC
+#define LED_FREQ 5000       // Frecuencia 5kHz
+#define LED_RESOLUTION 8    // Resolución 8 bits (0-255)
+
 // Pantalla OLED
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Adafruit_SH1106G display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 // Variables globales
 int modo = 1;
@@ -36,14 +41,17 @@ DHT dht(DHTPIN, DHTTYPE);
 void setup() {
   Serial.begin(115200);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
-  pinMode(LED_PWM, OUTPUT);
   pinMode(LED_EXT, OUTPUT);
 
+  // Configurar LEDC para LED PWM
+  ledcSetup(LED_CHANNEL, LED_FREQ, LED_RESOLUTION);
+  ledcAttachPin(LED_PWM, LED_CHANNEL);
+
   dht.begin();
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.begin(0x3C, true);
   display.clearDisplay();
   display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
+  display.setTextColor(SH110X_WHITE);
   display.setCursor(0, 0);
   display.println("TP1 IoT - ESP32");
   display.display();
@@ -64,6 +72,13 @@ void loop() {
   // Leer sensores
   hum = dht.readHumidity();
   temp = dht.readTemperature();
+  
+  // Validar lecturas del DHT
+  if (isnan(hum) || isnan(temp)) {
+    Serial.println("Error: Fallo en lectura DHT");
+    return; // Salir del loop si hay error
+  }
+  
   potValue = analogRead(POT_PIN);
 
   // Evaluar cada modo
@@ -103,7 +118,7 @@ void mostrarAmbientales() {
 // MODO 2: Control de LED con potenciómetro
 void controlLED() {
   brillo = map(potValue, 0, 4095, 0, 255);
-  analogWrite(LED_PWM, brillo);
+  ledcWrite(LED_CHANNEL, brillo);
 
   display.clearDisplay();
   display.setCursor(0, 0);
