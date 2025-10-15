@@ -7,7 +7,7 @@
 // ==============================
 #define DHTPIN 33           // Pin del sensor DHT
 #define DHTTYPE DHT22       // O DHT11 según la placa
-#define LED_PWM 25          // LED con PWM (LEDC)
+#define LED_PWM 2          // LED Integrado con PWM (LEDC)
 #define LED_EXT 23          // LED externo (alarma)
 #define POT_PIN 32          // Potenciómetro (entrada analógica)
 #define BUTTON_PIN 19       // Pulsador
