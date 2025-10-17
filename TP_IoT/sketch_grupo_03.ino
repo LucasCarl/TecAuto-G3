@@ -15,9 +15,9 @@
 #define TOUCH_MINUS 4       // Pin táctil -
 
 // Configuración LEDC
-#define LED_CHANNEL 0       // Canal LEDC
+//#define LED_CHANNEL 0       // Canal LEDC
 #define LED_FREQ 5000       // Frecuencia 5kHz
-#define LED_RESOLUTION 8    // Resolución 8 bits (0-255)
+#define LED_RESOLUTION 10    // Resolución 10 bits (0-1023)
 
 // Pantalla OLED
 #define SCREEN_WIDTH 128
@@ -44,8 +44,7 @@ void setup() {
   pinMode(LED_EXT, OUTPUT);
 
   // Configurar LEDC para LED PWM
-  ledcSetup(LED_CHANNEL, LED_FREQ, LED_RESOLUTION);
-  ledcAttachPin(LED_PWM, LED_CHANNEL);
+  ledcAttach(LED_PWM, LED_FREQ, LED_RESOLUTION);
 
   dht.begin();
   display.begin(0x3C, true);
@@ -117,8 +116,8 @@ void mostrarAmbientales() {
 
 // MODO 2: Control de LED con potenciómetro
 void controlLED() {
-  brillo = map(potValue, 0, 4095, 0, 255);
-  ledcWrite(LED_CHANNEL, brillo);
+  brillo = map(potValue, 0, 4095, 0, 1023);
+  ledcWrite(LED_PWM, brillo);
 
   display.clearDisplay();
   display.setCursor(0, 0);
