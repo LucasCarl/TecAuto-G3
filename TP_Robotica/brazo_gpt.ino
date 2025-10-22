@@ -1,15 +1,15 @@
-#include <ESP32Servo.h>
+#include <Servo.h>
 #include <math.h>
 
 // Pines de los servos
-#define pinS1 4
-#define pinS2 15
-#define pinS3 13
+#define pinS1 8
+#define pinS2 9
+#define pinS3 10
 
 // Parámetros del brazo
-float dp = 0;
-float dz = 6.5;
-float dh = 5.5;
+float dp = 1.5;
+float dz = 5;
+float dh = 0;
 float l1 = 8;
 float l2 = 8;
 
@@ -25,8 +25,8 @@ int posIni3 = 90;
 int pos;
 
 // Velocidad y tiempos
-int dt = 10;         // Velocidad del movimiento (ms por grado)
-int espera = 1000;   // Delay entre comandos
+int dt = 20;         // Velocidad del movimiento (ms por grado)
+int espera = 2000;   // Delay entre comandos
 
 // Servo objects
 Servo servo_1;
@@ -56,7 +56,7 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available()) {
+  if (Serial.available() >= 3) {
     String input = Serial.readStringUntil('\n');
 
     if (input == "goA") {
