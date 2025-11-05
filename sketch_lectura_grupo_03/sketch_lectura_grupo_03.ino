@@ -16,8 +16,8 @@ Adafruit_SH1106G display(128, 64, &Wire, -1);
 // ==============================
 // CONFIGURACIÓN WIFI Y THINGSPEAK
 // ==============================
-const char* ssid = "nombrwe wifi";
-const char* password = "pass wifi";
+const char* ssid = "ACNET2";
+const char* password = "";
 unsigned long channelID = 3143600;
 // const char* readAPIKey = "TU_READ_API_KEY"; // si es privado
 
@@ -69,7 +69,7 @@ void leerDatos() {
   float temp = ThingSpeak.readFloatField(channelID, 2);
   float hum = ThingSpeak.readFloatField(channelID, 3);
   float tiempo = ThingSpeak.readFloatField(channelID, 4);
-  String estado = ThingSpeak.readStringField(channelID, 5);
+  String estado = ThingSpeak.readStatus(channelID);
 
   // Checkea lectura
   int statusCode = ThingSpeak.getLastReadStatus();
@@ -88,7 +88,7 @@ void mostrarEnDisplay(int num, float temp, float hum, float tiempo, String estad
   String line1, line2;
   switch (pantalla) {
     case 0:
-      line1 = "Numero Aleatoreo: " + num;
+      line1 = "Numero Aleatoreo: " + String(num);
       line2 = "Temp: " + String(temp) + "C";
       break;
     case 1:
