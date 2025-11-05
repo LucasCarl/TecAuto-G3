@@ -18,8 +18,8 @@
 // ==============================
 // CONFIGURACIÓN DE WIFI Y THINGSPEAK
 // ==============================
-const char* ssid = "nombre wifi";
-const char* password = "pass wifi";
+const char* ssid = "ACNET2";
+const char* password = "";
 unsigned long channelID = 3143600;
 const char* writeAPIKey = "CERUUAI3S4HZJW8Z";
 
@@ -100,7 +100,7 @@ void enviarDatos() {
     ThingSpeak.setField (2,temp);
     ThingSpeak.setField (3,hum);
     ThingSpeak.setField (4,tiempo);
-    ThingSpeak.setField (5,estadoActual);
+    ThingSpeak.setStatus(estadoActual);
     int statusCode = ThingSpeak.writeFields(channelID,writeAPIKey);
     Serial.print("Datos enviados a ThingSpeak!   ");
     if(statusCode == 200){
